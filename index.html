@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<title>쇼핑몰 공조 관리</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="top">
+  <div>
+    <h1 id="siteName">공조 관리</h1>
+    <p id="siteSub" class="sub"></p>
+  </div>
+  <button id="wx" class="wx" type="button">실외 —</button>
+  <button id="syncBadge" class="badge" type="button">로컬 저장</button>
+</header>
+
+<main>
+
+  <!-- ===== 1. 입력 ===== -->
+  <section id="tab-input" class="tab active" aria-label="측정 입력">
+    <div class="card">
+      <h2>측정 위치</h2>
+      <div class="label">층</div>
+      <div id="floorGrid" class="grid3" role="radiogroup" aria-label="층 선택"></div>
+      <div class="label">구역</div>
+      <div id="zoneGrid" class="grid3" role="radiogroup" aria-label="구역 선택"></div>
+    </div>
+
+    <div class="card">
+      <h2>실내 <span class="req">필수</span></h2>
+      <div class="pair">
+        <label class="field">
+          <span>온도 (°C)</span>
+          <input id="inT" type="number" inputmode="decimal" step="0.1" placeholder="예: 24.5" autocomplete="off">
+        </label>
+        <label class="field">
+          <span>습도 (%)</span>
+          <input id="inH" type="number" inputmode="decimal" step="1" placeholder="예: 50" autocomplete="off">
+        </label>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>실외 <span class="opt">선택</span></h2>
+      <div class="pair">
+        <label class="field">
+          <span>온도 (°C)</span>
+          <input id="outT" type="number" inputmode="decimal" step="0.1" placeholder="예: 31.0" autocomplete="off">
+        </label>
+        <label class="field">
+          <span>습도 (%)</span>
+          <input id="outH" type="number" inputmode="decimal" step="1" placeholder="예: 65" autocomplete="off">
+        </label>
+      </div>
+      <p id="outHint" class="hint" hidden></p>
+    </div>
+
+    <div id="liveResult" class="card result" hidden></div>
+
+    <div class="card">
+      <details>
+        <summary>측정 시각 변경 (지나간 기록 입력)</summary>
+        <label class="field">
+          <span>측정 시각 (비우면 지금)</span>
+          <input id="inTime" type="datetime-local">
+        </label>
+      </details>
+      <label class="check">
+        <input id="autoNext" type="checkbox" checked>
+        <span>저장 후 다음 구역으로 자동 이동</span>
+      </label>
+    </div>
+
+    <button id="saveBtn" class="btn primary big" type="button">저장</button>
+  </section>
+
+  <!-- ===== 2. 그래프 ===== -->
+  <section id="tab-chart" class="tab" aria-label="그래프">
+    <div class="card">
+      <h2>최근 <span id="chartDaysLabel">5</span>일 추이</h2>
+      <div class="pair">
+        <label class="field sm"><span>층</span><select id="cFloor"></select></label>
+        <label class="field sm"><span>구역</span><select id="cZone"></select></label>
+      </div>
+      <p id="chartMode" class="hint"></p>
+      <div class="chartbox">
+        <canvas id="mainChart"></canvas>
+        <div id="chartEmpty" class="empty" hidden>이 기간에 기록이 없습니다. 입력 탭에서 측정값을 저장하면 그래프가 그려집니다.</div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>기록 목록 <span id="listCount" class="opt"></span></h2>
+      <div id="recList" class="reclist"></div>
+    </div>
+  </section>
+
+  <!-- ===== 공조기 / 에어커튼 (usage.js 가 내용을 채움) ===== -->
+  <section id="tab-hvac" class="tab usage-tab" aria-label="공조기"></section>
+  <section id="tab-curtain" class="tab usage-tab" aria-label="에어커튼"></section>
+
+  <!-- ===== 3. 리포트 ===== -->
+  <section id="tab-report" class="tab" aria-label="리포트">
+    <div class="card noprint">
+      <h2>리포트 만들기</h2>
+      <div id="rKind" class="segrow" role="radiogroup" aria-label="리포트 종류">
+        <button type="button" class="seg" role="radio" aria-checked="true" data-kind="climate">온습도</button>
+        <button type="button" class="seg" role="radio" aria-checked="false" data-kind="hvac">공조기</button>
+        <button type="button" class="seg" role="radio" aria-checked="false" data-kind="curtain">에어커튼</button>
+      </div>
+      <div id="climateCtl">
+      <div class="pair">
+        <label class="field sm"><span>층</span><select id="rFloor"></select></label>
+        <label class="field sm"><span>구역</span><select id="rZone"></select></label>
+      </div>
+      <label class="check">
+        <input id="rDetail" type="checkbox" checked>
+        <span>상세 기록표 포함</span>
+      </label>
+      <div class="btnrow">
+        <button id="printBtn" class="btn primary" type="button">인쇄 / PDF 저장</button>
+        <button id="csvBtn" class="btn" type="button">CSV 저장</button>
+      </div>
+      <p class="hint">인쇄 화면에서 '대상: PDF로 저장'을 고르면 PDF 파일이 됩니다.</p>
+      </div>
+      <div id="usageCtl" hidden>
+        <div class="pair">
+          <label class="field sm"><span>기간</span><select id="rPeriod"><option value="30">최근 30일</option><option value="90">최근 90일</option><option value="365">최근 1년</option><option value="all">전체 기간</option></select></label>
+          <label class="field sm"><span>정렬</span><select id="rSort"><option value="num">번호순</option><option value="desc">평균 가동 긴 순</option><option value="asc">평균 가동 짧은 순</option></select></label>
+        </div>
+        <div class="btnrow">
+          <button id="uPrint" class="btn primary" type="button">인쇄 / PDF 저장</button>
+          <button id="uCsv" class="btn" type="button">CSV 저장 (전체 기간)</button>
+          <button id="uBackup" class="btn" type="button">백업 파일 저장</button>
+          <button id="uRestore" class="btn" type="button">백업 불러오기</button>
+          <button id="uSync" class="btn" type="button">구글 시트로 동기화</button>
+          <button id="uPullAll" class="btn" type="button">시트에서 전체 기간 불러오기</button>
+        </div>
+        <input id="uFile" type="file" accept=".json,application/json" hidden>
+        <p class="hint">기록은 기간 제한 없이 이 기기와 구글 시트에 계속 쌓입니다. 새 기기에서는 [시트에서 전체 기간 불러오기]를 한 번 누르세요.</p>
+      </div>
+    </div>
+    <article id="report" class="report"></article>
+  </section>
+
+  <!-- ===== 4. 설정 ===== -->
+  <section id="tab-more" class="tab" aria-label="설정">
+    <div id="moreLock" class="lock" hidden>
+      <div id="pinBox" class="lockbox">
+        <h2><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>설정 잠금</h2>
+        <p class="hint">비밀번호 4자리를 입력하세요</p>
+        <input id="pinInput" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" aria-label="비밀번호">
+        <p id="pinMsg" class="pinmsg" role="alert"></p>
+        <button id="pinOk" class="btn primary" type="button">잠금 해제</button>
+      </div>
+    </div>
+    <div id="moreBody">
+    <div class="card">
+      <h2>Google 시트 저장</h2>
+      <p class="hint">설정하면 저장할 때마다 구글 시트에도 기록되고, 여러 기기의 기록을 합쳐 볼 수 있습니다. 설정 방법은 설명서(README)를 보세요.</p>
+      <label class="field sm"><span>웹앱 주소 (Apps Script 배포 URL)</span>
+        <input id="sheetUrl" type="url" inputmode="url" placeholder="https://script.google.com/macros/s/…/exec" autocomplete="off">
+      </label>
+      <label class="field sm"><span>인증 키 (token)</span>
+        <input id="sheetToken" type="text" autocomplete="off" placeholder="Apps Script와 동일한 값">
+      </label>
+      <div class="btnrow">
+        <button id="sheetSave" class="btn" type="button">설정 저장</button>
+        <button id="syncNow" class="btn primary" type="button">지금 동기화</button>
+      </div>
+      <p id="syncStatus" class="hint"></p>
+    </div>
+
+    <div class="card">
+      <h2>데이터</h2>
+      <div class="btnrow">
+        <button id="csvAll" class="btn" type="button">전체 기록 CSV</button>
+        <button id="wipeBtn" class="btn danger" type="button">이 기기 기록 삭제</button>
+      </div>
+      <p class="hint">기기 삭제는 구글 시트 기록에 영향을 주지 않습니다.</p>
+    </div>
+
+    <div class="card">
+      <h2>현재 설정값 <span class="opt">config.json</span></h2>
+      <div id="cfgInfo" class="cfginfo"></div>
+    </div>
+    </div>
+  </section>
+
+</main>
+
+<nav class="tabbar" aria-label="메뉴">
+  <button class="tabbtn active" data-tab="input" type="button" aria-current="page"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.4 3.6a2.1 2.1 0 0 1 3 3L7.4 18.6a2 2 0 0 1-.9.5l-2.9.8.8-2.9a2 2 0 0 1 .5-.9z"/></svg><span>입력</span></button>
+  <button class="tabbtn" data-tab="chart" type="button"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="m19 9-5 5-4-4-3 3"/></svg><span>그래프</span></button>
+  <button class="tabbtn" data-tab="hvac" type="button"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M10.8 16.4a6.1 6.1 0 0 1-8.6-7l5.4 1.4a6.1 6.1 0 0 1 7-8.6l-1.4 5.4a6.1 6.1 0 0 1 8.6 7l-5.4-1.4a6.1 6.1 0 0 1-7 8.6z"/><circle cx="12" cy="12" r=".6"/></svg><span>공조기</span></button>
+  <button class="tabbtn" data-tab="curtain" type="button"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12.8 19.6A2 2 0 1 0 14 16H2"/><path d="M17.5 8a2.5 2.5 0 1 1 2 4H2"/><path d="M9.8 4.4A2 2 0 1 1 11 8H2"/></svg><span>에어커튼</span></button>
+  <button class="tabbtn" data-tab="report" type="button"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg><span>리포트</span></button>
+  <button class="tabbtn" data-tab="more" type="button"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12.2 2h-.4a2 2 0 0 0-2 2v.2a2 2 0 0 1-1 1.7l-.4.3a2 2 0 0 1-2 0l-.2-.1a2 2 0 0 0-2.7.7l-.2.4a2 2 0 0 0 .7 2.7l.2.1a2 2 0 0 1 1 1.7v.5a2 2 0 0 1-1 1.8l-.2.1a2 2 0 0 0-.7 2.7l.2.4a2 2 0 0 0 2.7.7l.2-.1a2 2 0 0 1 2 0l.4.3a2 2 0 0 1 1 1.7v.2a2 2 0 0 0 2 2h.4a2 2 0 0 0 2-2v-.2a2 2 0 0 1 1-1.7l.4-.3a2 2 0 0 1 2 0l.2.1a2 2 0 0 0 2.7-.7l.2-.4a2 2 0 0 0-.7-2.7l-.2-.1a2 2 0 0 1-1-1.8v-.5a2 2 0 0 1 1-1.7l.2-.1a2 2 0 0 0 .7-2.7l-.2-.4a2 2 0 0 0-2.7-.7l-.2.1a2 2 0 0 1-2 0l-.4-.3a2 2 0 0 1-1-1.7V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg><span>설정</span></button>
+</nav>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script src="app.js"></script>
+<script src="usage.js"></script>
+</body>
+</html>

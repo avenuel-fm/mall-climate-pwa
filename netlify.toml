@@ -1,0 +1,24 @@
+# Netlify 배포 설정
+# 이 앱은 빌드가 필요 없는 정적 파일입니다. (Hugo, npm 등 불필요)
+# 빈 값("")은 Netlify가 '설정 없음'으로 취급해 사이트 화면의 기존 빌드 명령(hugo)이 쓰이므로,
+# 아무 일도 하지 않는 명령(echo)을 명시합니다.
+
+[build]
+  command = "echo 'static site - no build needed'"
+  publish = "."
+
+# 앱 업데이트가 폰/PC에 바로 반영되도록 핵심 파일은 캐시하지 않음
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+[[headers]]
+  for = "/config.json"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Cache-Control = "no-cache"
