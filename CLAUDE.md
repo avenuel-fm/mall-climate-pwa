@@ -10,6 +10,7 @@
 
 ## 기술 구성 (빌드 없음)
 - 순수 HTML/CSS/JS 정적 사이트. npm·빌드 도구 없음. Netlify 무료 플랜에 배포(드래그 앤 드롭 또는 Git).
+- 배포: **GitHub Pages** `https://avenuel-fm.github.io/mall-climate-pwa/` (저장소 `avenuel-fm/mall-climate-pwa`, main 브랜치 루트). 고친 뒤 `git add -A; git commit -m "..."; git push` 하면 1~2분 뒤 반영. 공개 저장소로 올리는 작업(push)은 Claude 자동 모드가 막으므로 사용자가 터미널에서 직접 실행. Claude의 Bash에서 한 `gh auth login`은 샌드박스에만 저장되니 로그인은 사용자 터미널에서. Netlify(`netlify.toml`)는 예전 배포 방식
 - 저장: 브라우저(localStorage, IndexedDB) + 구글 시트(Apps Script 웹앱).
 - 그래프: Chart.js 4.4.1 (`vendor/chart.umd.js` 우선, 없으면 cdnjs). 그래프를 만들 땐 로컬 파일 우선.
 - 실외 날씨: Open-Meteo API (좌표 37.5131, 127.1043, 10분 캐시).
@@ -51,7 +52,7 @@
 - 입력 칸/체크박스 CSS에 전역 `min-height: 44px`이 있어 작은 요소는 `min-height: 0 !important` 필요
 - PC 1920×950에서 공조기 표(층 8행 × 구역 3열)가 스크롤 없이 한 화면에 들어가야 함. 여유가 거의 없음(약 17px). 그래서 PC 표 카드는 3줄(저장 상태는 이름 줄, 가동시간 줄은 오류일 때만)이고 상단 제목 줄은 표 왼쪽 위 칸으로 옮김. 카드 높이를 늘리거나 구역 줄을 늘리는 변경은 이 조건을 다시 확인할 것
 - **화면 접근성·대비 규칙(2026-11 점검)**: 글자색은 배경 대비 4.5:1 이상(옅은 회색 `#9aa6a2`·`#b4bdba` 금지 → `var(--muted)`), 입력·선택칸 테두리는 `--line-strong`(3:1). 공조기 선택칸 `aria-label`은 "6층 39번 공조기 시작 시"처럼 장비 이름 포함. 헤더 버튼에 `aria-label`을 달면 화면 글자(온도·동기화 상태)가 가려지니 달지 말 것. 움직임은 `prefers-reduced-motion: no-preference` 안에서만. 오류 안내는 `toast(msg, true)`(눌러야 닫힘)이고 해결 방법을 함께 적을 것. 폰 선택칸 글자는 16px 이상(아이폰 자동 확대 방지)
-- **디자인 규칙(2026-11 unslop 정리)**: 화면 바탕·카드·글자는 회색 단계만(`--bg` `--card` `--raised` `--ink` `--secondary` `--muted`, 테두리 `--line`), 색은 포인트 청록 `--brand` 하나 + 의미 있는 색(불쾌지수 단계, 층 `tone`, 에어커튼 IN/OUT, 오류 빨강)만. 글자 굵기 400~600(700·800 금지), 알약(999px) 모양 금지 → 버튼·입력 10px, 카드 12~16px. 간격은 4의 배수. 아이콘은 이모지 대신 `index.html`의 선 아이콘 SVG(`.ico`). 숫자만 있는 곳(입력값·불쾌지수·실내외 차이·비밀번호)만 `--mono` 글꼴 — 한글이 섞인 곳에 쓰면 어색함. 움직임은 `--ease` 곡선, 누름은 `scale(.98)`
+- **디자인 규칙(2026-11, 종합업무일지 양식에 맞춤)**: 색은 옆 프로젝트 `avenuel-fm-apps/apps/ws/src/Styles.html`의 업무일지 색과 같게 — 바탕 `#F4F6F8`, 글자 `#18202B`/`#3F4855`/`#5B6573`, 표 머리 `#EDF0F3`·테두리 `#CBD2DB`(`--line-form`), 포인트 **남색 `#1F5FA8`** 하나(선택·저장 버튼·그래프 막대·`manifest` theme_color), 늘면 빨강 `#C0261A`/줄면 남색. 의미 있는 색(불쾌지수 단계, 층 `tone`, 에어커튼 IN/OUT)은 그대로. 글꼴 Noto Sans KR(없으면 맑은 고딕). 제목 15px 700, 요약 숫자는 종이 양식처럼 위에 검은 2px 줄. 버튼·입력 모서리 8px, 카드 12px, 알약(999px) 금지, 간격 4의 배수. 아이콘은 `index.html`의 선 아이콘 SVG(`.ico`). 숫자만 있는 곳만 `--mono`. 움직임은 `--ease`, 누름은 `scale(.98)`
 - `.empty` 같은 `display`를 지정한 요소에 `hidden`을 쓰면 숨겨지지 않음 → `[hidden] { display: none }` 규칙을 함께 둘 것 (그래프 '기록 없음' 오류 원인이었음)
 
 ## 테스트 방법

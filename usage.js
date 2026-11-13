@@ -480,7 +480,7 @@
         const ch = new window.Chart(cv, {
           type: 'bar',
           data: { labels, datasets: [
-            { type: 'bar', label: monthly ? '월 합계(시간)' : '일 합계(시간)', data: tot, yAxisID: 'y', backgroundColor: '#0f766e', borderRadius: 3 },
+            { type: 'bar', label: monthly ? '월 합계(시간)' : '일 합계(시간)', data: tot, yAxisID: 'y', backgroundColor: '#1F5FA8', borderRadius: 3 },
             { type: 'line', label: '1대 평균(시간)', data: avgs, yAxisID: 'y2', borderColor: '#d9480f', backgroundColor: '#d9480f', borderWidth: 2.5, pointRadius: 2.5, tension: 0.2, spanGaps: true }
           ] },
           options: { responsive: false, animation: false, devicePixelRatio: 2,
