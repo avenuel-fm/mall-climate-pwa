@@ -134,8 +134,8 @@
     "refreshMin": 10
   },
 
-  "_화면설명": "tabbarBottomOffset: 하단 탭 메뉴를 화면 아래에서 띄우는 높이(px). Netlify의 'Powered by' 배지가 탭을 가리면 56 정도로, 필요 없으면 0으로.",
+  "_화면설명": "tabbarBottomOffset: 하단 탭 메뉴를 화면 아래에서 띄우는 높이(px). GitHub Pages는 0. Netlify처럼 'Powered by' 배지가 탭을 가리는 곳이면 56 정도로.",
   "ui": {
-    "tabbarBottomOffset": 56
+    "tabbarBottomOffset": 0
   }
 }

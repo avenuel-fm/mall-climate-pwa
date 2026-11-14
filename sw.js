@@ -2,7 +2,7 @@
  * - 같은 사이트 파일: 네트워크 우선(최신 반영), 실패/지연 시 캐시 사용
  * - Chart.js (CDN): 캐시 우선 (한 번 불러오면 오프라인에서도 동작)
  * 앱 파일 구성을 바꾸면 CACHE 이름의 숫자를 올리세요. */
-const CACHE = 'mallclimate-v13';
+const CACHE = 'mallclimate-v14';
 const CORE = [
   './', './index.html', './style.css', './app.js', './usage.js', './config.json',
   './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png'

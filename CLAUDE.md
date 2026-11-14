@@ -45,7 +45,7 @@
 
 ## 알려진 함정
 - **Netlify `hugo: command not found`**: 사이트에 예전 Hugo 빌드 설정이 저장돼 있으면 발생. `netlify.toml`의 `command = "echo ..."`와 `publish = "."`로 해결. 안 되면 새 사이트로 폴더를 올리거나, 사이트 설정에서 Build command/Publish directory/HUGO_VERSION을 지울 것. 빈 문자열 `command = ""`은 '설정 없음' 취급이라 쓰면 안 됨
-- 화면 우측 하단 'Powered by Netlify' 배지는 하단 탭을 가림 → `config.json`의 `ui.tabbarBottomOffset: 56`으로 탭을 위로 올려 둠
+- 하단 탭: 폰에서는 화면 맨 아래에 붙은 막대(좌우 끝까지, 아이폰 홈 막대 자리만 여백), PC는 가운데 떠 있는 640px 막대. GitHub Pages에서는 `config.json`의 `ui.tabbarBottomOffset: 0`. Netlify로 되돌리면 'Powered by Netlify' 배지가 탭을 가리므로 56으로
 - 배포 후 폰이 옛 화면을 보이면 앱을 완전히 닫았다 열기. 코드를 바꿀 때 `sw.js`의 `CACHE` 버전 숫자를 올릴 것
 - `vendor/chart.umd.js`는 아직 없음(이 파일을 받을 수 없는 환경이었음). 인터넷이 되는 곳이라면 `https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js`를 받아 `vendor/chart.umd.js`로 저장하면 오프라인에서도 그래프가 나옴
 - 새 기기에서는 리포트 탭의 **[시트에서 전체 기간 불러오기]**를 한 번 눌러야 과거 기록이 보임

@@ -159,11 +159,13 @@ details summary { min-height: 44px; display: flex; align-items: center; color: v
 
 /* ---------- 하단 탭 ---------- */
 .tabbar {
-  position: fixed; left: 8px; right: 8px; z-index: 20;
-  bottom: calc(var(--tab-offset, 0px) + 8px + env(safe-area-inset-bottom));
+  /* 폰: 화면 맨 아래에 붙임 (아이폰 홈 막대 자리만큼 아래 여백) */
+  position: fixed; left: 0; right: 0; z-index: 20;
+  bottom: var(--tab-offset, 0px);
+  padding-bottom: env(safe-area-inset-bottom);
   display: grid; grid-template-columns: repeat(6, 1fr);
-  background: #fff; border: 1px solid var(--line); border-radius: 16px;
-  box-shadow: 0 8px 24px rgba(0,0,0,.08); overflow: hidden;
+  background: #fff; border-top: 1px solid var(--line);
+  box-shadow: 0 -4px 16px rgba(0,0,0,.06); overflow: hidden;
 }
 .tabbtn {
   height: var(--tabbar-h); border: 0; background: transparent; color: var(--muted);
@@ -381,7 +383,7 @@ details summary { min-height: 44px; display: flex; align-items: center; color: v
   :root { --tabbar-h: 54px; }
   body { padding-bottom: calc(var(--tabbar-h) + 30px); }
   .top { padding-top: 8px; padding-bottom: 8px; }
-  .tabbar { left: 50%; right: auto; width: 640px; transform: translateX(-50%); bottom: 10px; }
+  .tabbar { left: 50%; right: auto; width: 640px; transform: translateX(-50%); bottom: 10px; padding-bottom: 0; border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,.08); }
   #toast { bottom: calc(var(--tabbar-h) + 34px); }
   body[data-tab="hvac"] main, body[data-tab="curtain"] main { max-width: none; padding: 8px 16px 0; }
 

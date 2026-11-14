@@ -159,7 +159,7 @@ PWA 설치와 구글 시트 연동은 **https 주소**에서만 동작합니다.
 
 ## 8. 하단 메뉴가 "Powered by Netlify" 배지에 가릴 때
 
-- 배지는 Netlify가 붙이는 것이라 앱에서 지울 수 없습니다. 대신 `config.json`의 `ui.tabbarBottomOffset`(기본 56px)만큼 하단 메뉴를 위로 띄워 배지에 가려지지 않게 했습니다. 배지가 없는 곳에 올리면 `0`으로 바꾸세요.
+- 배지는 Netlify가 붙이는 것이라 앱에서 지울 수 없습니다. 대신 `config.json`의 `ui.tabbarBottomOffset`(Netlify라면 56px, GitHub Pages는 0)만큼 하단 메뉴를 위로 띄워 배지에 가려지지 않게 했습니다. 배지가 없는 곳에 올리면 `0`으로 바꾸세요.
 
 ## 계산식
 

@@ -46,7 +46,7 @@
       ]
     },
     weather: { enabled: true, label: '잠실 에비뉴엘', lat: 37.5131, lon: 127.1043, refreshMin: 10 },
-    ui: { tabbarBottomOffset: 56 }
+    ui: { tabbarBottomOffset: 0 }
   };
 
   const CHART_LOCAL = 'vendor/chart.umd.js';
